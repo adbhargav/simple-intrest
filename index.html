@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple Interest Calculator</title>
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #89fffd, #ef32d9);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            color: #333;
+        }
+        .container {
+            background: white;
+            max-width: 450px;
+            width: 100%;
+            padding: 20px 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+            overflow-y: auto;
+            max-height: 90vh;
+        }
+        h2 {
+            text-align: center;
+            color: #4e54c8;
+            margin-bottom: 20px;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #555;
+        }
+        .form-group input {
+            width: 100%;
+            padding: 10px;
+            font-size: 14px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        button {
+            width: 100%;
+            padding: 10px;
+            background: linear-gradient(90deg, #4e54c8, #8f94fb);
+            border: none;
+            border-radius: 5px;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        button:hover {
+            background: linear-gradient(90deg, #8f94fb, #4e54c8);
+        }
+        .result-section {
+            display: none;
+            margin-top: 20px;
+            font-size: 16px;
+            text-align: center;
+            color: #4e54c8;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Simple Interest Calculator</h2>
+        <form id="interestForm" onsubmit="return false;">
+            <div class="form-group">
+                <label for="startDate">Start Date:</label>
+                <input type="date" id="startDate" required>
+            </div>
+            <div class="form-group">
+                <label for="endDate">End Date:</label>
+                <input type="date" id="endDate" required>
+            </div>
+            <div class="form-group">
+                <label for="principal">Principal Amount (₹):</label>
+                <input type="number" id="principal" placeholder="Enter principal amount" required>
+            </div>
+            <div class="form-group">
+                <label for="rate">Rate of Interest (Monthly %):</label>
+                <input type="number" id="rate" placeholder="Enter rate of interest" required>
+            </div>
+            <button type="button" onclick="calculateInterest()">Calculate</button>
+        </form>
+
+        <!-- Hidden result section -->
+        <div class="result-section" id="resultSection">
+            <h3>Calculation Result</h3>
+            <p id="totalInterest"></p>
+            <p id="duration"></p>
+            <ul id="breakdown"></ul>
+        </div>
+    </div>
+
+    <script>
+        function calculateInterest() {
+            const startDate = new Date(document.getElementById('startDate').value);
+            const endDate = new Date(document.getElementById('endDate').value);
+            const principal = parseFloat(document.getElementById('principal').value);
+            const rate = parseFloat(document.getElementById('rate').value);
+
+            if (isNaN(principal) || isNaN(rate) || !startDate || !endDate || startDate >= endDate) {
+                alert("Please enter valid inputs.");
+                return;
+            }
+
+            // Calculate total duration
+            const timeInDays = (endDate - startDate) / (1000 * 60 * 60 * 24);
+            const months = Math.floor(timeInDays / 30); // Full months
+            const remainingDays = timeInDays % 30; // Remaining days
+
+            // Simple interest for months
+            const interestForMonths = (principal * rate * months) / 100;
+
+            // Simple interest for remaining days (proportional to a month)
+            const interestForDays = (principal * rate * remainingDays) / (100 * 30);
+
+            // Total interest
+            const totalInterest = interestForMonths + interestForDays;
+
+            // Update result section
+            document.getElementById('totalInterest').innerHTML = `<strong>Total Simple Interest:</strong> ₹${totalInterest.toFixed(2)}`;
+            document.getElementById('duration').innerHTML = `<strong>Duration:</strong> ${months} months and ${remainingDays.toFixed(0)} days`;
+            document.getElementById('breakdown').innerHTML = `
+                <li><strong>Interest for ${months} months:</strong> ₹${interestForMonths.toFixed(2)}</li>
+                <li><strong>Interest for ${remainingDays.toFixed(0)} days:</strong> ₹${interestForDays.toFixed(2)}</li>
+            `;
+
+            // Show the result section and hide the form
+            document.getElementById('resultSection').style.display = 'block';
+            document.getElementById('interestForm').style.display = 'none';
+        }
+    </script>
+</body>
+</html>
